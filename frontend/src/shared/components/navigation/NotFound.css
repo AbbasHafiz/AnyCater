@@ -1,0 +1,21 @@
+/* NotFound.css */
+.not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    margin-bottom: 20px;
+  }
+  
+  /* You can style the Button component separately in its own file or inline styles */
+  

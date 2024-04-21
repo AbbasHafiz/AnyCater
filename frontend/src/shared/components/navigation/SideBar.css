@@ -1,0 +1,35 @@
+/* Sidebar.css */
+
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar h2 {
+   
+    align-items: inherit;
+  }
+  
+  .sidebar nav ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar nav ul li {
+    margin-bottom: 10px;
+  }
+  
+  .sidebar nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  
+  .sidebar nav ul li a:hover {
+    color: #00bcd4;
+  }
+  
