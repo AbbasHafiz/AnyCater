@@ -1,8 +1,8 @@
 // apiConfig.js
 import useAuth from "../hooks/useAuth"; 
 // utils.js (or any appropriate file)
-
-const BASE_URL = 'https://fabulous-ordinary-rail.glitch.me/';
+//https://fabulous-ordinary-rail.glitch.me/
+const BASE_URL = 'http://localhost:4000';
 const getApiEndpoints = (auth) => {
    
   
