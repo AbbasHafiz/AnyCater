@@ -1,11 +1,15 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink ,useNavigate} from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import './NavLinks.css';
 
 const NavLinks = (props) => {
   const { isLoggedIn, userId, logout } = useAuth();
-
+  const navigate = useNavigate(); 
+  const handleLogout = () => {
+    logout(); // Trigger logout action
+    navigate('/'); // Redirect to the home page after logout
+  };
   return (
     <ul className="nav-links">
       <li>
@@ -30,7 +34,7 @@ const NavLinks = (props) => {
       )}
       {isLoggedIn && (
         <li>
-          <button onClick={logout}>LOGOUT</button>
+          <button onClick={handleLogout}>LOGOUT</button>
         </li>
       )}
     </ul>
