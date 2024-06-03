@@ -2,7 +2,7 @@
 import useAuth from "../hooks/useAuth"; 
 // utils.js (or any appropriate file)
 //https://fabulous-ordinary-rail.glitch.me/
-const BASE_URL = 'https://fabulous-ordinary-rail.glitch.me';
+const BASE_URL = 'https://bb027c97-5d7b-4615-97ef-dc13408dad2a-00-78rjh1jf4lwo.pike.replit.dev';
 const getApiEndpoints = (auth) => {
    
   
