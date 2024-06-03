@@ -34,7 +34,7 @@ const EditProfile = ({ onUpdateSuccess, userProfileData, onUpdateImage }) => {
       },
       image: {
         value: null,
-        isValid: false,
+        isValid: true, // Initially set to true
       },
     },
     false
@@ -57,7 +57,7 @@ const EditProfile = ({ onUpdateSuccess, userProfileData, onUpdateImage }) => {
         },
         image: {
           value: userProfileData.image,
-          isValid: true,
+          isValid: true, // Set to true if an initial image is provided
         },
       }, true);
     }
@@ -71,7 +71,9 @@ const EditProfile = ({ onUpdateSuccess, userProfileData, onUpdateImage }) => {
       formData.append('name', formState.inputs.name.value);
       formData.append('email', formState.inputs.email.value);
       formData.append('phoneNo', formState.inputs.phoneNo.value);
-      formData.append('image', formState.inputs.image.value);
+      if (formState.inputs.image.value) {
+        formData.append('image', formState.inputs.image.value);
+      }
   
       const responseData = await sendRequest(
         apiEndpoints.EDIT_PROFILE,
@@ -87,8 +89,10 @@ const EditProfile = ({ onUpdateSuccess, userProfileData, onUpdateImage }) => {
       if (responseData) {
         setSuccessMessage('Profile updated successfully!');
         onUpdateSuccess(responseData);
-        onUpdateImage(responseData.image);
-        console.log(responseData.image);
+        if (responseData.image) {
+          onUpdateImage(responseData.image);
+          console.log(responseData.image);
+        }
       } else {
         console.error('Error updating user profile:', responseData);
   

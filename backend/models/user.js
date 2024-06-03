@@ -30,7 +30,11 @@ const userSchema = new mongoose.Schema({
     token: {
         type: String
         // Add any other configurations as needed (e.g., unique, required, etc.)
-    }
+    },
+    locations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Location'
+    }]
 });
 userSchema.plugin(uniqueValidator);
 const User = mongoose.model('User', userSchema);
