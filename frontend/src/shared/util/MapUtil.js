@@ -36,7 +36,7 @@ const MapUtil = ({ onUpdateLocation }) => {
         const { latitude, longitude } = position.coords;
         const center = fromLonLat([longitude, latitude]);
         map.getView().setCenter(center);
-        map.getView().setZoom(12);
+        map.getView().setZoom(16); // Adjust the zoom level as needed
 
         // Update the location with the user's current coordinates
         onUpdateLocation(latitude, longitude, 'Current Location');
@@ -66,7 +66,22 @@ const MapUtil = ({ onUpdateLocation }) => {
         console.error('Error fetching address:', error);
       }
 
+      // Update the location with the clicked coordinates and address
       onUpdateLocation(latitude, longitude, address);
+
+      // Add a marker for the clicked location
+      const marker = new Feature({
+        geometry: new Point(coordinates),
+      });
+      pointerLayer.getSource().clear(); // Clear existing markers
+      pointerLayer.getSource().addFeature(marker);
+
+      // Zoom in to the clicked location
+      map.getView().animate({
+        center: coordinates,
+        zoom: 16, // Adjust zoom level as needed
+        duration: 500, // Animation duration in milliseconds
+      });
     });
 
     return () => {
@@ -74,7 +89,7 @@ const MapUtil = ({ onUpdateLocation }) => {
     };
   }, [onUpdateLocation]);
 
-  return <div ref={mapRef} style={{ width: '100%', height: '400px' }} />;
+  return <div ref={mapRef} style={{ width: '100%', height: '400px', cursor: 'crosshair' }} />;
 };
 
 export default MapUtil;
