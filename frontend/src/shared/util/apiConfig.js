@@ -1,6 +1,6 @@
 // apiConfig.js
 import useAuth from "../hooks/useAuth"; 
-// utils.js (or any appropriate file)
+// utils.js (or any appropriate file) https://fabulous-ordinary-rail.glitch.me/
 
 const BASE_URL = 'http://localhost:4000';
 const getApiEndpoints = (auth) => {
@@ -19,7 +19,9 @@ const getApiEndpoints = (auth) => {
       getUserLocation: (userId) => `${BASE_URL}/api/users/user-location/${auth.userId}`,
       updateUserLocation: (userId) => `${BASE_URL}/api/users/add-user-location/${auth.userId}`,
       addUserLocation: (userId) => `${BASE_URL}/api/users/update-user-location/${auth.userId}`,
-
+      SLIDER: `${BASE_URL}/api/slider`,
+      UPDATE_SETTINGS: `${BASE_URL}/api/settings`,
+      GET_SETTINGS:`${BASE_URL}/api/settings`
     };
   };
   
