@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                // Checkout source code from Git repository
+                git 'https://github.com/AbbasHafiz/AnyCater.git'
+
+                // Build Docker image
+                script {
+                    docker.build('myapp')
+                }
+            }
+        }
+    }
+}

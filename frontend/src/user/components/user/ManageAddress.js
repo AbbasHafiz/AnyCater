@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import MapUtil from '../../../shared/util/MapUtil';
 import { useHttpClient } from '../../../shared/hooks/http-hook';
 import { API_ENDPOINTS } from '../../../shared/util/apiConfig';
@@ -10,101 +10,89 @@ const ManageAddress = ({ userId }) => {
   const { sendRequest } = useHttpClient();
   const auth = useAuth();
 
+  // State variables to track live address, latitude, and longitude
+  const [liveAddress, setLiveAddress] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
-  const [address, setAddress] = useState('');
 
-  useEffect(() => {
-    const fetchUserLocation = async () => {
-      try {
-        const responseData = await sendRequest(apiEndpoints.getUserLocation(auth.userId));
-        if (responseData.location) {
-          setLatitude(responseData.location.latitude);
-          setLongitude(responseData.location.longitude);
-          setAddress(responseData.location.address);
-        } else {
-          await handleAddLocation(); // User has no location, add a new one
-        }
-      } catch (error) {
-        console.error('Error fetching user location:', error);
-        console.log('Error details:', error); // Log error details
+  // Function to handle fetching live address
+  const fetchAddress = async () => {
+    try {
+      // Check if Geolocation is supported by the browser
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          try {
+            // Fetch address using latitude and longitude
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+            const data = await response.json();
+            if (data && data.display_name) {
+              setLiveAddress(data.display_name);
+              setLatitude(latitude);
+              setLongitude(longitude);
+            }
+          } catch (error) {
+            console.error('Error fetching address:', error);
+          }
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser');
       }
-    };
-  
-    fetchUserLocation();
-  }, [apiEndpoints, auth.userId, sendRequest]);
-  
+    } catch (error) {
+      console.error('Error fetching live address:', error);
+    }
+  };
 
-  const handleUpdateLocation = async (latitude, longitude, address) => {
-    setLatitude(latitude);
-    setLongitude(longitude);
-    setAddress(address);
-
+  // Function to handle updating user location
+  const handleUpdateLocation = async () => {
     try {
       await sendRequest(apiEndpoints.updateUserLocation(auth.userId), 'PATCH', {
         latitude,
         longitude,
-        address,
+        address: liveAddress,
       });
     } catch (error) {
       console.error('Error updating user location:', error);
     }
   };
 
+  // Function to handle adding user location
   const handleAddLocation = async () => {
     try {
       await sendRequest(apiEndpoints.addUserLocation(auth.userId), 'POST', {
         latitude,
         longitude,
-        address,
+        address: liveAddress,
       });
     } catch (error) {
-      console.error('Error adding new location:', error);
+      console.error('Error adding user location:', error);
     }
   };
 
-  const handleInputChange = async (inputAddress) => {
-    setAddress(inputAddress);
-
-    try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(inputAddress)}`);
-      const data = await response.json();
-      if (data && data.length > 0) {
-        const { lat, lon, display_name } = data[0];
-        setLatitude(lat);
-        setLongitude(lon);
-        setAddress(display_name);
-      }
-    } catch (error) {
-      console.error('Error fetching coordinates:', error);
-    }
+  // Function to handle pin drop event
+  const handlePinDrop = (droppedLatitude, droppedLongitude) => {
+    setLatitude(droppedLatitude);
+    setLongitude(droppedLongitude);
   };
 
-
-  if (!auth.isLoggedIn || auth.role !== 'User') {
-    return <p>Please log in to access the user dashboard.</p>;
-  }
-
+  // Render UI
   return (
     <div className="manage-address-container">
       <h2>User Location</h2>
       <p>Latitude: {latitude}</p>
       <p>Longitude: {longitude}</p>
-      <p>Address: {address}</p>
+      <p>Address: {liveAddress}</p>
 
       <h2>Update User Location</h2>
       <div className="map-input-container">
-        <input
-          type="text"
-          placeholder="Enter address..."
-          value={address}
-          onChange={(e) => handleInputChange(e.target.value)}
-        />
-        <button onClick={handleAddLocation}>Add Location</button>
+        <button onClick={fetchAddress}>Fetch Live Address</button>
+        <button onClick={handleUpdateLocation}>Update User Location</button>
+        <button onClick={handleAddLocation}>Add User Location</button>
         <MapUtil
           latitude={latitude}
           longitude={longitude}
-          onUpdateLocation={handleUpdateLocation}
+          onUpdateLocation={handlePinDrop} // Pass handlePinDrop function
         />
       </div>
     </div>

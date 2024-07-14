@@ -70,7 +70,7 @@ const App = () => {
           {/* Add a wildcard route for unmatched routes */}
           {/* Add a route for the root path */}
           <Route path="*" element={<NotFound/>} />
-          <Route path="/" element={<Home/>} />
+          <Route exact path="/" element={<Home/>} />
 
           {/* Add a wildcard route for unmatched routes */}
           
@@ -82,9 +82,15 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
+<<<<<<< HEAD
         <Route path="/unauthorized" element={<Unauthorized />} />
         
         <Route path="/" element={<Navigate to="/" />} />
+=======
+        
+        <Route exact path="/" element={<Home/>} />
+       
+>>>>>>> ec19191a7aebb8b95b881433affebdffba2b60fd
       </Routes>
     );
   }
