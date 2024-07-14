@@ -11,7 +11,7 @@ const OwnerDashboard = () => {
   const apiEndpoints = API_ENDPOINTS();
   const [profileData, setProfileData] = useState(null);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-
+  
   
   const handleUpdateImage = (newImage) => {
     setProfileData((prevProfileData) => ({
@@ -19,6 +19,10 @@ const OwnerDashboard = () => {
       image: newImage,
     }));
   };
+
+ 
+
+
   if (!auth.isLoggedIn || auth.role !== 'Owner') {
     return <p>Please log in to access the Owner dashboard.</p>;
   }
@@ -36,6 +40,7 @@ const OwnerDashboard = () => {
                 className="profile-image"
               />
             )}
+           
             <h4 className="username">Welcome, {auth.username}!</h4>
           </div>
           <ul>
@@ -52,13 +57,15 @@ const OwnerDashboard = () => {
               <Link to="/manage-address">Manage Restaurant</Link>
             </li>
           </ul>
+         
         </div>
         {/* End of Sidebar */}
-      </div>
+        
       <Routes>
         <Route path="profile" element={<Profile onUpdateImage={handleUpdateImage} />} />
         {/* Add more routes for other tabs if needed */}
       </Routes>
+    </div>
     </div>
   );
 };

@@ -24,11 +24,15 @@ const getApiEndpoints = (auth) => {
       addUserLocation: (userId) => `${BASE_URL}/api/users/update-user-location/${auth.userId}`,
       SLIDER: `${BASE_URL}/api/slider`,
       UPDATE_SETTINGS: `${BASE_URL}/api/settings`,
+<<<<<<< HEAD
       GET_SETTINGS:`${BASE_URL}/api/settings`,
       getUserLocation: (userId) => `${BASE_URL}/api/locations/user-location/${auth.userId}`,
       updateUserLocation: (userId) => `${BASE_URL}/api/locations/update-user-location/${auth.userId}`,
       addUserLocation: (userId) => `${BASE_URL}/api/locations/add-user-location/${auth.userId}`,
 
+=======
+      GET_SETTINGS:`${BASE_URL}/api/settings`
+>>>>>>> ee8bdee (add new feature site setting and Slider)
     };
   };
   
