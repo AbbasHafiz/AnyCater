@@ -87,7 +87,7 @@ const App = () => {
         <Route path="/" element={<Navigate to="/" />} />
         
         <Route exact path="/" element={<Home/>} />
-
+       
       </Routes>
     );
   }
