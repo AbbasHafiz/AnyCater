@@ -82,15 +82,11 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
-<<<<<<< HEAD
-        
-        <Route exact path="/" element={<Home/>} />
-       
-=======
         <Route path="/unauthorized" element={<Unauthorized />} />
         
         <Route path="/" element={<Navigate to="/" />} />
->>>>>>> ee8bdee (add new feature site setting and Slider)
+        
+        <Route exact path="/" element={<Home/>} />
       </Routes>
     );
   }
