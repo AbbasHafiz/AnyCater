@@ -82,15 +82,13 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
-<<<<<<< HEAD
+
         <Route path="/unauthorized" element={<Unauthorized />} />
         
         <Route path="/" element={<Navigate to="/" />} />
-=======
         
         <Route exact path="/" element={<Home/>} />
        
->>>>>>> ec19191a7aebb8b95b881433affebdffba2b60fd
       </Routes>
     );
   }
