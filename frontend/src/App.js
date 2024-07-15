@@ -82,12 +82,15 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
+
         <Route path="/unauthorized" element={<Unauthorized />} />
         
         <Route path="/" element={<Navigate to="/" />} />
         
         <Route exact path="/" element={<Home/>} />
+
 </Routes>
+
     );
   }
 
