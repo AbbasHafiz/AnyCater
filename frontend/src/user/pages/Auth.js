@@ -76,8 +76,7 @@ const Auth = (props) => {
   };
   
   useEffect(() => {
-    console.log('Form State:', formState);
-    console.log('Form is Valid:', formState.isValid);
+
   }, [formState]);
   
 
@@ -99,7 +98,6 @@ const Auth = (props) => {
         );
 
         auth.login(responseData);
-console.log('user',responseData);
         if (responseData.role) {
           handleRoleNavigation(responseData.role);
         } else {
