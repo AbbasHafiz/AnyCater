@@ -6,6 +6,8 @@ import {
   Navigate,
   BrowserRouter,
 } from "react-router-dom";
+import { SettingsProvider } from "./shared/context/SettingContext";
+
 import Auth from "./user/pages/Auth";
 import AdminDashboard from "./user/components/admin/AdminDashboard";
 import UserDashboard from "./user/components/user/UserDashboard";
@@ -22,7 +24,6 @@ const App = () => {
   let routes;
 
   if (isLoggedIn) {
-    console.log("roles", role);
     routes = (
       <Routes>
         <Route>
@@ -79,7 +80,11 @@ const App = () => {
   } else {
     routes = (
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        
+        <Route path="/" element={<Navigate to="/" />} />
         
         <Route exact path="/" element={<Home/>} />
        
@@ -88,10 +93,11 @@ const App = () => {
   }
 
   return (
+    <SettingsProvider>
     <BrowserRouter>
       <MainNavigation />
       <main>{routes}</main>
-    </BrowserRouter>
+    </BrowserRouter></SettingsProvider>
   );
 };
 
