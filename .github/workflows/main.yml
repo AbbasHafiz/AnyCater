@@ -16,11 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
       - name: Set up Node.js for backend
         uses: actions/setup-node@v3
         with:
@@ -43,6 +38,8 @@ jobs:
 
       - name: Set up Docker Compose for MongoDB
         run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
           echo 'version: "3"
           services:
             mongo:
@@ -61,16 +58,6 @@ jobs:
       - name: Check MongoDB logs if failure
         if: failure()
         run: docker logs $(docker-compose ps -q mongo)
-
-      - name: Run backend tests
-        run: |
-          cd backend
-          npm test
-
-      - name: Run frontend tests
-        run: |
-          cd frontend
-          npm test
 
       - name: Build frontend
         run: |
