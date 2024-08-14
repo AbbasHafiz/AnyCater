@@ -12,17 +12,6 @@ jobs:
   setup:
     runs-on: ubuntu-latest
 
-    services:
-      mongo:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongosh --eval 'db.adminCommand('ping')'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -46,6 +35,27 @@ jobs:
         run: |
           cd frontend
           npm install
+
+      - name: Set up Docker Compose for MongoDB
+        run: |
+          echo 'version: "3"
+          services:
+            mongo:
+              image: mongo:latest
+              ports:
+                - 27017:27017
+              healthcheck:
+                test: "exit 0"
+                interval: 10s
+                retries: 5' > docker-compose.yml
+          docker-compose up -d
+
+      - name: Wait for MongoDB to start
+        run: sleep 20s
+
+      - name: Check MongoDB logs if failure
+        if: failure()
+        run: docker logs $(docker-compose ps -q mongo)
 
       - name: Run backend tests
         run: |
@@ -79,3 +89,7 @@ jobs:
           cd frontend
           docker build -t ${{ secrets.DOCKER_USERNAME }}/mern-frontend:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/mern-frontend:latest
+
+      - name: Tear down Docker Compose
+        if: always()
+        run: docker-compose down
