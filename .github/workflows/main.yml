@@ -31,33 +31,36 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16.x'
-        working-directory: ./backend
 
       - name: Install backend dependencies
-        run: npm install
-        working-directory: ./backend
+        run: |
+          cd backend
+          npm install
 
       - name: Set up Node.js for frontend
         uses: actions/setup-node@v3
         with:
           node-version: '16.x'
-        working-directory: ./frontend
 
       - name: Install frontend dependencies
-        run: npm install
-        working-directory: ./frontend
+        run: |
+          cd frontend
+          npm install
 
       - name: Run backend tests
-        run: npm test
-        working-directory: ./backend
+        run: |
+          cd backend
+          npm test
 
       - name: Run frontend tests
-        run: npm test
-        working-directory: ./frontend
+        run: |
+          cd frontend
+          npm test
 
       - name: Build frontend
-        run: npm run build
-        working-directory: ./frontend
+        run: |
+          cd frontend
+          npm run build
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -67,10 +70,12 @@ jobs:
 
       - name: Build and push backend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/mern-backend:latest ./backend
+          cd backend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/mern-backend:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/mern-backend:latest
 
       - name: Build and push frontend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/mern-frontend:latest ./frontend
+          cd frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/mern-frontend:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/mern-frontend:latest
