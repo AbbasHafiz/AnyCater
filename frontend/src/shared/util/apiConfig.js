@@ -3,10 +3,6 @@ import useAuth from "../hooks/useAuth";
 // utils.js (or any appropriate file) https://fabulous-ordinary-rail.glitch.me/
 
 //const BASE_URL = 'http://localhost:4000';
-<<<<<<< HEAD
-=======
-
->>>>>>> 037920e (change urls)
 // utils.js (or any appropriate file)
 
 //https://fabulous-ordinary-rail.glitch.me/
@@ -14,10 +10,6 @@ const BASE_URL = 'https://fabulous-ordinary-rail.glitch.me';
 
 //https://fabulous-ordinary-rail.glitch.me/https://bb027c97-5d7b-4615-97ef-dc13408dad2a-00-78rjh1jf4lwo.pike.replit.dev'
 //const BASE_URL = 'https://fabulous-ordinary-rail.glitch.me';
-<<<<<<< HEAD
-=======
-
->>>>>>> 037920e (change urls)
 const getApiEndpoints = (auth) => {
    
   
