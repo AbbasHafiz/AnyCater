@@ -86,7 +86,7 @@ mongoose
     console.log(err);
   });
 // Start the server
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
