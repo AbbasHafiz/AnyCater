@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = "abbashafiz09"   // your Docker Hub username
+        DOCKERHUB_USER = "abbashafiz09"
         APP_NAME      = "anycater"
         APP_PORT      = "3000"
+        EC2_USER      = "ubuntu"
+        EC2_HOST      = "98.81.4.37"
     }
 
     stages {
@@ -29,21 +31,27 @@ pipeline {
             }
         }
 
-        stage('Deploy to EC2') {
-    steps {
-        sshagent(['deploy-key']) {
-            sh """
-                ssh -o StrictHostKeyChecking=no ubuntu@98.81.4.37 '
-                    docker pull abbashafiz09/anycater:${BUILD_NUMBER} &&
-                    docker stop anycater || true &&
-                    docker rm anycater || true &&
-                    docker run -d --name anycater -p 3000:3000 abbashafiz09/anycater:${BUILD_NUMBER}
-                '
-            """
+        stage('Test SSH Connection') {
+            steps {
+                sshagent(['deploy-key']) {
+                    sh 'ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "echo SSH agent works!"'
+                }
+            }
         }
-    }
-}
 
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(['deploy-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \\
+                        "docker pull $DOCKERHUB_USER/$APP_NAME:\${BUILD_NUMBER} &&
+                         docker stop $APP_NAME || true &&
+                         docker rm $APP_NAME || true &&
+                         docker run -d --name $APP_NAME -p $APP_PORT:$APP_PORT $DOCKERHUB_USER/$APP_NAME:\${BUILD_NUMBER}"
+                    """
+                }
+            }
+        }
     }
 
     post {
