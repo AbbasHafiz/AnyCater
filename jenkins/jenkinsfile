@@ -1,15 +1,53 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Build') {
-            steps {
-                // Checkout source code from Git repository
-                git 'https://github.com/AbbasHafiz/AnyCater.git'
+    environment {
+        IMAGE = "your-dockerhub-username/anycater:${BUILD_NUMBER}"
+        DEPLOY_SERVER = "ubuntu@98.81.4.37"
+        APP_PORT = "3000"
+    }
 
-                // Build Docker image
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/AbbasHafiz/AnyCater.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
                 script {
-                    docker.build('myapp')
+                    sh "docker build -t $IMAGE ."
+                }
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh "docker push $IMAGE"
+            }
+        }
+
+        stage('Deploy to Server') {
+            steps {
+                script {
+                    // Make sure Jenkins has SSH access to the server using PEM or authorized_keys
+                    sh """
+                    ssh -o StrictHostKeyChecking=no $DEPLOY_SERVER '
+                        docker pull $IMAGE &&
+                        docker stop app || true &&
+                        docker rm app || true &&
+                        docker run -d --name app -p $APP_PORT:$APP_PORT $IMAGE
+                    '
+                    """
                 }
             }
         }
