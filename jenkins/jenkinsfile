@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = "your-dockerhub-username/anycater:${BUILD_NUMBER}"
+        IMAGE = "abbashafiz09/anycater:${BUILD_NUMBER}"
         DEPLOY_SERVER = "ubuntu@98.81.4.37"
         APP_PORT = "3000"
     }
