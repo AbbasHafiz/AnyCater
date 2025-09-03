@@ -1,33 +1,26 @@
-# Use official Node.js image
-FROM node:18-alpine AS builder
+# ---- Build frontend ----
+FROM node:18-alpine AS frontend-builder
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm install --legacy-peer-deps
+COPY frontend/ .
+RUN npm run build
 
-# Set working directory inside container
-WORKDIR /app
-
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install --production
-
-# Copy source code
-COPY . .
-
-# Build step (if you have React frontend, etc.)
-# RUN npm run build
-
-# -----------------------------
-# Production Stage
-# -----------------------------
+# ---- Build backend ----
 FROM node:18-alpine
-
 WORKDIR /app
 
-# Copy only necessary files from builder
-COPY --from=builder /app /app
+# Install backend dependencies
+COPY backend/package*.json ./backend/
+RUN cd backend && npm install --legacy-peer-deps
 
-# Expose app port
+# Copy backend code
+COPY backend ./backend
+
+# Copy built frontend into backend/public
+COPY --from=frontend-builder /app/frontend/build ./backend/public
+
+WORKDIR /app/backend
 EXPOSE 3000
 
-# Start app
 CMD ["npm", "start"]
