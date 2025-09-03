@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = "abbashafiz09"
-        APP_NAME = "anycater"
+        DOCKERHUB_USER = "abbashafiz09"   // your Docker Hub username
+        APP_NAME      = "anycater"
+        APP_PORT      = "3000"
     }
 
     stages {
@@ -21,26 +22,35 @@ pipeline {
 
         stage('Push to DockerHub') {
             steps {
-                withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKERHUB_PASS')]) {
-                    sh 'echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-token', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                     sh 'docker push $DOCKERHUB_USER/$APP_NAME:${BUILD_NUMBER}'
                 }
             }
         }
 
-        stage('Deploy to Server') {
+        stage('Deploy to EC2') {
             steps {
                 sshagent(['deploy-key']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@98.81.4.37 "
-                          docker pull $DOCKERHUB_USER/$APP_NAME:${BUILD_NUMBER} &&
-                          docker stop $APP_NAME || true &&
-                          docker rm $APP_NAME || true &&
-                          docker run -d --name $APP_NAME -p 3000:3000 $DOCKERHUB_USER/$APP_NAME:${BUILD_NUMBER}
-                        "
-                    '''
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@98.81.4.37 '
+                            docker pull $DOCKERHUB_USER/$APP_NAME:${BUILD_NUMBER} &&
+                            docker stop $APP_NAME || true &&
+                            docker rm $APP_NAME || true &&
+                            docker run -d --name $APP_NAME -p $APP_PORT:$APP_PORT $DOCKERHUB_USER/$APP_NAME:${BUILD_NUMBER}
+                        '
+                    """
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo "Build #${BUILD_NUMBER} finished"
+        }
+        failure {
+            echo "Build #${BUILD_NUMBER} failed!"
         }
     }
 }
