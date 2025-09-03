@@ -38,7 +38,22 @@ pipeline {
                 }
             }
         }
-
+stage('Check Docker on EC2') {
+            steps {
+                sshagent(['deploy-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST '
+                            if ! command -v docker &> /dev/null; then
+                                echo "ERROR: Docker is not installed on EC2!"
+                                exit 1
+                            else
+                                echo "Docker is installed, continuing..."
+                            fi
+                        '
+                    """
+                }
+            }
+        }
         stage('Deploy to EC2') {
             steps {
                 sshagent(['deploy-key']) {
