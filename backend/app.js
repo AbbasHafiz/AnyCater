@@ -1,23 +1,23 @@
+require('dotenv').config(); // Load environment variables
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const HttpError = require('./models/http-error'); // Make sure HttpError is imported
+const HttpError = require('./models/http-error');
 
 const app = express();
 
-// Middleware for parsing JSON and URL-encoded bodies
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serving static files (images)
-app.use('/uploads/images', express.static(path.join(__dirname, 'uploads', 'images')));
-
-// CORS setup
 app.use(cors());
 
-// Define routes
+// Serve static files
+app.use('/uploads/images', express.static(path.join(__dirname, 'uploads', 'images')));
+
+// Routes
 const userRoutes = require('./routes/userRoutes');
 const cateringShopRoutes = require('./routes/cateringShopRoutes');
 const menuRoutes = require('./routes/menuRoutes');
@@ -37,33 +37,31 @@ app.use('/api/catering-shops', cateringShopRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/menu-items', menuItemRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/drivers', driverRoutes); // Include if applicable
-app.use('/api/locations', locationRoutes); // Include if applicable
-app.use('/api/categories', categoryRoutes); // Include if applicable
-app.use('/api/admin', adminRoutes); // Include if applicable
+app.use('/api/drivers', driverRoutes);
+app.use('/api/locations', locationRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/catering-owner', cateringOwnerRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 app.use('/api', settingsRoutes);
 
-// Handle unknown routes
+// 404 route handler
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);
   throw error;
 });
 
-// Handle not found middleware
+// Not found middleware
 app.use(notFoundMiddleware);
 
-// Error handling middleware
+// Error handler middleware
 app.use((err, req, res, next) => {
-  // Delete uploaded file if there was an error during file upload
   if (req.file) {
     fs.unlink(req.file.path, err => {
       console.log(err);
     });
   }
 
-  // Respond with appropriate status code and error message
   if (err.code === 'LIMIT_FILE_SIZE') {
     return res.status(400).json({ message: 'File size too large. Max size allowed is 500 KB.' });
   } else if (err.code === 'INVALID_MIME_TYPE') {
@@ -73,20 +71,16 @@ app.use((err, req, res, next) => {
   }
 });
 
-// Connect to MongoDB and start the server
+// Connect to MongoDB and start server
+const PORT = process.env.PORT || 4000;
+
 mongoose
-  .connect(
-    `mongodb+srv://abbashafiz09:dEAmBvAdugVcQK6M@cluster0.cw37ldi.mongodb.net/mydb?retryWrites=true&w=majority`
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => {
-    app.listen(5000);
-    
+    app.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}/`);
+    });
   })
   .catch(err => {
     console.log(err);
   });
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
-});
